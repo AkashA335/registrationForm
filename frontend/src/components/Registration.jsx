@@ -3,15 +3,17 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const BACKEND_URL = import.meta.env.VITE_API_URL ;
+
 const Registration = () => {
   const [values, setValues] = React.useState({
-    name: "",
-    employeeID: "",
-    email: "",
-    phoneNumber: "",
-    department: "",
-    dateOfJoining: "",
-    role: ""
+    name: '',
+    employeeID: '',
+    email: '',
+    phoneNumber: '',
+    department: '',
+    dateOfJoining: '',
+    role: '',
   });
 
   const handleChange = (e) => {
@@ -21,18 +23,18 @@ const Registration = () => {
   const validateForm = () => {
     const errors = {};
 
-    if (!values.name.trim()) errors.name = "Name is required";
-    if (!values.employeeID.trim()) errors.employeeID = "Employee ID is required";
-    if (!values.email.trim()) errors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(values.email)) errors.email = "Email is not valid";
+    if (!values.name.trim()) errors.name = 'Name is required';
+    if (!values.employeeID.trim()) errors.employeeID = 'Employee ID is required';
+    if (!values.email.trim()) errors.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(values.email)) errors.email = 'Email is not valid';
     if (!values.phoneNumber.trim()) {
-      errors.phoneNumber = "Phone number is required";
+      errors.phoneNumber = 'Phone number is required';
     } else if (!/^\d{10}$/.test(values.phoneNumber)) {
-      errors.phoneNumber = "Phone number must be 10 digits";
+      errors.phoneNumber = 'Phone number must be 10 digits';
     }
-    if (!values.department.trim()) errors.department = "Department is required";
-    if (!values.dateOfJoining.trim()) errors.dateOfJoining = "Date of joining is required";
-    if (!values.role.trim()) errors.role = "Role is required";
+    if (!values.department.trim()) errors.department = 'Department is required';
+    if (!values.dateOfJoining.trim()) errors.dateOfJoining = 'Date of joining is required';
+    if (!values.role.trim()) errors.role = 'Role is required';
 
     return errors;
   };
@@ -42,39 +44,38 @@ const Registration = () => {
 
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
-      Object.values(errors).forEach(error => toast.error(error));
+      Object.values(errors).forEach((error) => toast.error(error));
       return;
     }
 
-    axios.post('http://localhost:8080/register', values)
-      .then(res => {
-        toast.success("Registration Successful!");
+    axios
+      .post(`${BACKEND_URL}/register`, values)
+      .then((res) => {
+        toast.success('Registration Successful!');
       })
-      .catch(err => {
-        if (err.response.status === 409) {
-          if (err.response.data.message === "Email already exists") {
-            toast.error("Email already exists. Please use a different email.");
-          } else if (err.response.data.message === "Employee ID already exists") {
-            toast.error("Employee ID already exists. Please use a different ID.");
+      .catch((err) => {
+        if (err.response && err.response.status === 409) {
+          if (err.response.data.message === 'Email already exists') {
+            toast.error('Email already exists. Please use a different email.');
+          } else if (err.response.data.message === 'Employee ID already exists') {
+            toast.error('Employee ID already exists. Please use a different ID.');
           }
         } else {
-          toast.error("Error during registration. Please try again.");
+          toast.error('Error during registration. Please try again.');
         }
       });
   };
 
-  const isFormValid = Object.keys(validateForm()).length === 0;
-
   const handleReset = () => {
     toast.dismiss();
     setValues({
-      name: "",
-      employeeID: "",
-      email: "",
-      phoneNumber: "",
-      department: "",
-      dateOfJoining: "",
-      role: ""
+      name: '',
+      employeeID: '',
+      email: '',
+      phoneNumber: '',
+      department: '',
+      dateOfJoining: '',
+      role: '',
     });
   };
 
@@ -160,8 +161,10 @@ const Registration = () => {
         </div>
 
         <div>
-          <button type="submit" /*</div>disabled={!isFormValid}*/>Submit</button>
-          <button type="reset" onClick={handleReset}>Reset</button>
+          <button type="submit">Submit</button>
+          <button type="reset" onClick={handleReset}>
+            Reset
+          </button>
         </div>
       </form>
 
